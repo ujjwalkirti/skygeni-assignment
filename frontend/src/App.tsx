@@ -16,22 +16,55 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
+      main: '#2563eb', // Blue from the banner
+      light: '#3b82f6',
+      dark: '#1e40af',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#f97316', // Orange from SkyGeni branding
+      light: '#fb923c',
+      dark: '#ea580c',
     },
     background: {
-      default: '#f5f5f5',
+      default: '#f8fafc',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#0f172a',
+      secondary: '#64748b',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif',
+    h3: {
+      fontWeight: 700,
+    },
     h4: {
-      fontWeight: 600,
+      fontWeight: 700,
+    },
+    h5: {
+      fontWeight: 700,
     },
     h6: {
-      fontWeight: 500,
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '0.95rem',
+    },
+    body2: {
+      fontSize: '0.875rem',
+    },
+  },
+  shape: {
+    borderRadius: 8,
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        },
+      },
     },
   },
 });

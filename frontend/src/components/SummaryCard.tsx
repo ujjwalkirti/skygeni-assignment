@@ -1,4 +1,4 @@
-import { Paper, Grid, Typography, Box, Chip } from '@mui/material';
+import { Paper, Typography, Box, Chip, Divider, Card } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import type { SummaryData } from '../services/api';
@@ -18,13 +18,15 @@ const SummaryCard = ({ data }: SummaryCardProps) => {
     const svg = d3.select(chartRef.current);
     svg.selectAll('*').remove();
 
-    const width = 400;
-    const height = 200;
+    const parentWidth = chartRef.current.parentElement?.clientWidth || 400;
+    const width = parentWidth;
+    const parentHeight = chartRef.current.parentElement?.clientHeight || 200;
+    const height = parentHeight;
     const margin = { top: 20, right: 20, bottom: 40, left: 60 };
 
     const chartData = [
-      { label: 'Revenue', value: data.revenue, color: '#1976d2' },
-      { label: 'Target', value: data.target, color: '#dc004e' },
+      { label: 'Revenue', value: data.revenue, color: '#3b82f6' },
+      { label: 'Target', value: data.target, color: '#f97316' },
     ];
 
     const x = d3.scaleBand()
@@ -37,7 +39,7 @@ const SummaryCard = ({ data }: SummaryCardProps) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    svg.attr('width', width).attr('height', height);
+    svg.attr('width', '100%').attr('height', height).attr('viewBox', `0 0 ${width} ${height}`);
 
     svg.selectAll('rect')
       .data(chartData)
@@ -95,74 +97,75 @@ const SummaryCard = ({ data }: SummaryCardProps) => {
   const isQoQPositive = data.qoq_change >= 0;
 
   return (
-    <Paper elevation={2} sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
+    <Paper elevation={1} sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
         Quarterly Summary
       </Typography>
+      <Divider sx={{ my: 1 }} />
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Box>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Current Revenue
-            </Typography>
-            <Typography variant="h4" color="primary">
-              {formatCurrency(data.revenue)}
-            </Typography>
-          </Box>
+      {/* Data Row */}
+      <Box sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+        gap: 3,
+        mb: 3
+      }}>
+        <Card sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 0.5 }}>
+            Current Revenue
+          </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: '#2563eb' }}>
+            {formatCurrency(data.revenue)}
+          </Typography>
+        </Card>
 
-          <Box mt={2}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Target
-            </Typography>
-            <Typography variant="h5">
-              {formatCurrency(data.target)}
-            </Typography>
-          </Box>
+        <Card sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 0.5 }}>
+            Target
+          </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            {formatCurrency(data.target)}
+          </Typography>
+        </Card>
 
-          <Box mt={2}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Gap
+        <Card sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 0.5 }}>
+            Gap
+          </Typography>
+          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
+            <Typography variant="h5" sx={{ fontWeight: 700 }} color={isOnTarget ? 'success.main' : 'error.main'}>
+              {formatCurrency(Math.abs(data.gap))}
             </Typography>
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="h5" color={isOnTarget ? 'success.main' : 'error.main'}>
-                {formatCurrency(Math.abs(data.gap))}
-              </Typography>
-              <Chip
-                label={formatPercentage(Math.abs(data.gap_percentage))}
-                color={isOnTarget ? 'success' : 'error'}
-                size="small"
-              />
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {isOnTarget ? 'Above target' : 'Below target'}
-            </Typography>
+            <Chip
+              label={formatPercentage(Math.abs(data.gap_percentage))}
+              color={isOnTarget ? 'success' : 'error'}
+              size="small"
+            />
           </Box>
+        </Card>
 
-          <Box mt={2}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Quarter-over-Quarter Change
+        <Card sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 0.5 }}>
+            Quarter-over-Quarter
+          </Typography>
+          <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
+            <Typography variant="h5" sx={{ fontWeight: 700 }} color={isQoQPositive ? 'success.main' : 'error.main'}>
+              {formatCurrency(Math.abs(data.qoq_change))}
             </Typography>
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="h5" color={isQoQPositive ? 'success.main' : 'error.main'}>
-                {formatCurrency(Math.abs(data.qoq_change))}
-              </Typography>
-              {isQoQPositive ? <TrendingUpIcon color="success" /> : <TrendingDownIcon color="error" />}
-              <Chip
-                label={formatPercentage(data.qoq_change_percentage)}
-                color={isQoQPositive ? 'success' : 'error'}
-                size="small"
-              />
-            </Box>
+            {isQoQPositive ? <TrendingUpIcon color="success" /> : <TrendingDownIcon color="error" />}
+            <Chip
+              label={formatPercentage(data.qoq_change_percentage)}
+              color={isQoQPositive ? 'success' : 'error'}
+              size="small"
+            />
           </Box>
-        </Grid>
+        </Card>
+      </Box>
 
-        <Grid item xs={12} md={6}>
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <svg ref={chartRef}></svg>
-          </Box>
-        </Grid>
-      </Grid>
+      {/* Full-width Chart */}
+      <Box sx={{ width: '100%', height: 250 }}>
+        <svg ref={chartRef} style={{ display: 'block' }}></svg>
+      </Box>
     </Paper>
   );
 };

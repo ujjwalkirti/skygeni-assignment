@@ -56,10 +56,11 @@ func (ds *DataService) loadJSON(filename string, v interface{}) error {
 }
 
 func (ds *DataService) GetCurrentQuarter() (int, int) {
-	now := time.Now()
-	year := now.Year()
-	month := int(now.Month())
-	quarter := (month-1)/3 + 1
+	// Analyzing 2025 data - showing Q4 2025 as the "current" quarter
+	// since that's the most recent complete quarter in the dataset
+	// In production, this would use time.Now() for real-time analysis
+	year := 2025
+	quarter := 4
 	return quarter, year
 }
 
